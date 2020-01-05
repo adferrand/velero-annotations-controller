@@ -140,7 +140,7 @@ public class ControllerApp {
             }
 
             Map<String, String> podAnnotations = pod.getMetadata().getAnnotations();
-            String veleroAnnotationsStr = podAnnotations.get(VELERO_ANNOTATION);
+            String veleroAnnotationsStr = podAnnotations != null ? podAnnotations.get(VELERO_ANNOTATION): null;
             List<String> veleroAnnotations;
             if (veleroAnnotationsStr == null) {
                 veleroAnnotations = Collections.emptyList();
@@ -171,7 +171,13 @@ public class ControllerApp {
                 List<String> newAnnotations = new ArrayList<>(veleroAnnotations);
                 newAnnotations.addAll(missingAnnotations);
                 String value = String.join(",", newAnnotations);
-                String patch = "[{\"op\":\"" + action + "\",\"path\":\"/metadata/annotations/" + VELERO_ANNOTATION_SANITIZED + "\",\"value\":\"" + value + "\"}]";
+
+                String patch;
+                if (podAnnotations == null) {
+                    patch = "[{\"op\":\"add\",\"path\":\"/metadata/annotations\",\"value\":{\"" + VELERO_ANNOTATION + "\":\""+ value + "\"}}]";
+                } else {
+                    patch = "[{\"op\":\"" + action + "\",\"path\":\"/metadata/annotations/" + VELERO_ANNOTATION_SANITIZED + "\",\"value\":\"" + value + "\"}]";
+                }
 
                 try {
                     LOGGER.debug("Patching {}/{} with: {}", request.getNamespace(), request.getName(), patch);
