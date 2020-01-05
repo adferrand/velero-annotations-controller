@@ -10,6 +10,8 @@ FROM openjdk:11
 # Example: "one-ns,another-ns" to run the controller only for ns one-ns and another-ns.
 # Filter is disabled if the environment variable is empty.
 ENV VELERO_ANNOTATIONS_CONTROLLER_NS_FILTER ""
+# Set to "false" to watch all volumes, not only volumes with persistent volume claims.
+ENV VELERO_ANNOTATIONS_CONTROLLER_PVCS_ONLY "true"
 
 COPY --from=0 /velero-annotations-controller/build/install/velero-annotations-controller /application
 

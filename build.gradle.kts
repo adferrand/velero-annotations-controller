@@ -22,4 +22,5 @@ application {
 
 val test by tasks.getting(Test::class) {
     useJUnitPlatform()
+    systemProperty("test.kubeconfig.path", System.getProperty("test.kubeconfig.path"))
 }
