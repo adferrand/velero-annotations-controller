@@ -6,10 +6,20 @@ pool:
 
 variables:
   imageName: adferrand/velero-annotations-controller
+  dockerServiceConnection: dockerhub-adferrand
 
 steps:
 - task: Docker@2
-  displayName: Build the Docker image
+  displayName: Build the Docker image (latest)
   inputs:
     repository: $(imageName)
     command: build
+- task: Docker@2
+  displayName: Push the Docker image
+  inputs:
+    containerRegistry: $(dockerServiceConnection)
+    repository: $(imageName)
+    command: push
+    tags: |
+      latest
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
