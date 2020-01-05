@@ -29,6 +29,7 @@ import io.kubernetes.client.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 public class ControllerApp {
     private static final String VELERO_ANNOTATION = "backup.velero.io/backup-volumes";
     private static final String VELERO_ANNOTATION_SANITIZED = "backup.velero.io~1backup-volumes";
+    private static final String NS_FILTER_ENV_VAR_NAME = "VELERO_ANNOTATIONS_CONTROLLER_NS_FILTER";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerApp.class);
 
     public static void main(String[] args) throws IOException {
@@ -61,7 +64,16 @@ public class ControllerApp {
 
         informerFactory.startAllRegisteredInformers();
 
-        PodVeleroAnnotationsReconciler podReconciler = new PodVeleroAnnotationsReconciler(podInformer, coreV1Api);
+        String namespacesFilterStr = System.getenv(NS_FILTER_ENV_VAR_NAME);
+        List<String> namespacesFilter;
+        if (namespacesFilterStr != null && !namespacesFilterStr.isEmpty()) {
+            namespacesFilter = Arrays.asList(namespacesFilterStr.split(","));
+            LOGGER.info("Environment variable {} is set, the controller will watch only following namespaces: {}", NS_FILTER_ENV_VAR_NAME, namespacesFilter);
+        } else {
+            namespacesFilter = null;
+        }
+
+        PodVeleroAnnotationsReconciler podReconciler = new PodVeleroAnnotationsReconciler(podInformer, coreV1Api, namespacesFilter);
 
         Controller controller = ControllerBuilder.defaultBuilder(informerFactory)
                 .watch(workQueue -> ControllerBuilder.controllerWatchBuilder(V1Pod.class, workQueue)
@@ -91,16 +103,28 @@ public class ControllerApp {
     }
 
     static class PodVeleroAnnotationsReconciler implements Reconciler {
-        private Lister<V1Pod> podLister;
-        private CoreV1Api coreV1Api;
+        private final Lister<V1Pod> podLister;
+        private final CoreV1Api coreV1Api;
+        private final List<String> namespacesFilter;
 
-        public PodVeleroAnnotationsReconciler(SharedIndexInformer<V1Pod> podInformer, CoreV1Api coreV1Api) {
+        public PodVeleroAnnotationsReconciler(
+                SharedIndexInformer<V1Pod> podInformer,
+                CoreV1Api coreV1Api,
+                @Nullable List<String> namespacesFilter) {
             this.podLister = new Lister<>(podInformer.getIndexer());
             this.coreV1Api = coreV1Api;
+            this.namespacesFilter = namespacesFilter;
         }
 
         @Override
         public Result reconcile(Request request) {
+            if (namespacesFilter != null && !namespacesFilter.contains(request.getNamespace())) {
+                LOGGER.debug(
+                        "Skip reconciliation in namespace {} since namespacesFilter is set, and {} is not part of it.",
+                        request.getNamespace(), request.getNamespace());
+                return new Result(false);
+            }
+
             V1Pod pod = this.podLister.namespace(request.getNamespace()).get(request.getName());
 
             Map<String, String> podAnnotations = pod.getMetadata().getAnnotations();
