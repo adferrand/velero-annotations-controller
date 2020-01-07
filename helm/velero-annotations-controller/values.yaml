@@ -1,13 +1,14 @@
-# Default values for velero-annotations-controller.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
 image:
   repository: adferrand/velero-annotations-controller
   tag: latest
   pullPolicy: Always
+
+imagePullSecrets: []
+
+namespacesFilter: ""
+watchPVCsOnly: false
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

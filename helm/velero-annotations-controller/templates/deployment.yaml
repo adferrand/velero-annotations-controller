@@ -3,42 +3,32 @@ kind: Deployment
 metadata:
   name: {{ include "velero-annotations-controller.fullname" . }}
   labels:
-    {{- include "velero-annotations-controller.labels" . | nindent 4 }}
+{{ include "velero-annotations-controller.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "velero-annotations-controller.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ include "velero-annotations-controller.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "velero-annotations-controller.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ include "velero-annotations-controller.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "velero-annotations-controller.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          env:
+          - name: VELERO_ANNOTATIONS_CONTROLLER_NS_FILTER
+            value: "{{ .Values.namespacesFilter }}"
+          - name: VELERO_ANNOTATIONS_CONTROLLER_PVCS_ONLY
+            value: "{{ .Values.watchPVCsOnly | quote }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -52,4 +42,7 @@ spec:
     {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if .Values.rbac.create }}
+      serviceAccount: {{ include "velero-annotations-controller.fullname" . }}
     {{- end }}
