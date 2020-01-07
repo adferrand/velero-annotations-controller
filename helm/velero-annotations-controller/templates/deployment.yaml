@@ -28,7 +28,7 @@ spec:
           - name: VELERO_ANNOTATIONS_CONTROLLER_NS_FILTER
             value: "{{ .Values.namespacesFilter }}"
           - name: VELERO_ANNOTATIONS_CONTROLLER_PVCS_ONLY
-            value: "{{ .Values.watchPVCsOnly | quote }}"
+            value: "{{ .Values.watchPVCsOnly }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
