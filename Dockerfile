@@ -1,3 +1,5 @@
+# First step: build the distribution folder for the application.
+# Second step: copy this folder into its runtime environment.
 FROM openjdk:11
 
 COPY . /velero-annotations-controller

@@ -1,5 +1,6 @@
 plugins {
     java
+    // Enabling application plugin allow us to use tasks to create distribuable artifacts.
     application
 }
 
@@ -17,6 +18,7 @@ dependencies {
 }
 
 application {
+    // This value needs to be updated if Java class for the Controller application is changed.
     mainClassName = "velero.annotations.controller.ControllerApp"
 }
 
