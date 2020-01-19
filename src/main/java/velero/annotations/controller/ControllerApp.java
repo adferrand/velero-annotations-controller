@@ -112,10 +112,12 @@ public class ControllerApp {
         // Indeed, LeaderElectingController is able to coordinate several controller instances through several Pods, and query
         // a Leader election to select the actual controller instance responsible to o actions. This way, loosing a Pod allows
         // an automated transfer of Leader role (and operations) to another Pod.
+        UUID identity = UUID.randomUUID();
+        LOGGER.info("Controller instance identity for Leader election is: {}", identity);
         return new LeaderElectingController(
                 new LeaderElector(
                         new LeaderElectionConfig(
-                                new EndpointsLock("kube-system", "leader-election", "velero-annotations-controller"),
+                                new EndpointsLock("kube-system", "velero-annotations-controller", identity.toString()),
                                 Duration.ofMillis(10000),
                                 Duration.ofMillis(8000),
                                 Duration.ofMillis(5000))),
