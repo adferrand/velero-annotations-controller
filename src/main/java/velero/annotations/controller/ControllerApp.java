@@ -19,6 +19,7 @@ import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.informer.cache.Lister;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodList;
@@ -49,7 +50,8 @@ public class ControllerApp {
     public static void main(String[] args) throws IOException {
         LOGGER.info("Preparing the controller ...");
         ApiClient apiClient = Config.fromCluster();
-        Controller controller = generateController(new CoreV1Api(apiClient));
+        Configuration.setDefaultApiClient(apiClient);
+        Controller controller = generateController(new CoreV1Api());
 
         LOGGER.info("Starting the controller ...");
         controller.run();
