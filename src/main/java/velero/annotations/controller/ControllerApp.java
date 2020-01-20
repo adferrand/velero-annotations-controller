@@ -17,16 +17,19 @@ import io.kubernetes.client.extended.leaderelection.resourcelock.EndpointsLock;
 import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.informer.cache.Lister;
+import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodList;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.util.CallGeneratorParams;
+import io.kubernetes.client.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,9 +46,10 @@ public class ControllerApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerApp.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         LOGGER.info("Preparing the controller ...");
-        Controller controller = generateController(new CoreV1Api());
+        ApiClient apiClient = Config.defaultClient();
+        Controller controller = generateController(new CoreV1Api(apiClient));
 
         LOGGER.info("Starting the controller ...");
         controller.run();
