@@ -4,9 +4,6 @@
  */
 package velero.annotations.controller;
 
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.custom.V1Patch;
 import io.kubernetes.client.extended.controller.Controller;
 import io.kubernetes.client.extended.controller.LeaderElectingController;
@@ -20,15 +17,16 @@ import io.kubernetes.client.extended.leaderelection.resourcelock.EndpointsLock;
 import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.informer.cache.Lister;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1PodList;
-import io.kubernetes.client.models.V1Volume;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.models.V1Pod;
+import io.kubernetes.client.openapi.models.V1PodList;
+import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.util.CallGeneratorParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,7 +64,7 @@ public class ControllerApp {
                 (CallGeneratorParams params) ->
                         coreV1Api.listPodForAllNamespacesCall(
                                 null, null, null, null, null,
-                                params.resourceVersion, params.timeoutSeconds, params.watch, null, null),
+                                null, params.resourceVersion, params.timeoutSeconds, params.watch, null),
                 V1Pod.class,
                 V1PodList.class);
 

@@ -1,11 +1,11 @@
 package velero.annotations.controller;
 
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.apis.AppsV1Api;
-import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.extended.controller.Controller;
-import io.kubernetes.client.models.*;
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.apis.AppsV1Api;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
 import io.kubernetes.client.util.Yaml;
@@ -79,7 +79,7 @@ class ControllerAppIT {
         appsApi.createNamespacedDeployment("integration-tests", deployment, null, null, null);
 
         retryAssert(() -> {
-            V1PodList list = this.coreApi.listNamespacedPod("integration-tests", null, null, null, null, null, null, null, true);
+            V1PodList list = this.coreApi.listNamespacedPod("integration-tests", null, null, null, null, null, null, null, null,true);
             assertFalse(list.getItems().isEmpty());
 
             V1Pod pod = list.getItems().get(0);
