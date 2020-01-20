@@ -35,7 +35,8 @@ class ControllerAppIT {
         kubeConfig.setContext(context);
 
         ApiClient apiClient = Config.fromConfig(kubeConfig);
-        controller = ControllerApp.generateController(apiClient);
+        CoreV1Api coreV1Api = new CoreV1Api(apiClient);
+        controller = ControllerApp.generateController(coreV1Api);
         new Thread(controller).start();
     }
 

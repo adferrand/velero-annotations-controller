@@ -6,7 +6,6 @@ package velero.annotations.controller;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
-import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.custom.V1Patch;
 import io.kubernetes.client.extended.controller.Controller;
@@ -25,7 +24,6 @@ import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Volume;
 import io.kubernetes.client.util.CallGeneratorParams;
-import io.kubernetes.client.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +45,9 @@ public class ControllerApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerApp.class);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         LOGGER.info("Preparing the controller ...");
-        Controller controller = generateController(Config.defaultClient());
+        Controller controller = generateController(new CoreV1Api());
 
         LOGGER.info("Starting the controller ...");
         controller.run();
@@ -58,13 +56,10 @@ public class ControllerApp {
     /**
      * Create a controller ready to be started.
      *
-     * @param apiClient a well-configured {@link ApiClient} instance, to be able to watch pods on the cluster
+     * @param coreV1Api a well-configured {@link CoreV1Api} instance, to be able to watch pods on the cluster
      * @return a {@link Controller} instance ready to be started
      */
-    static Controller generateController(ApiClient apiClient) {
-        Configuration.setDefaultApiClient(apiClient);
-        CoreV1Api coreV1Api = new CoreV1Api();
-
+    static Controller generateController(CoreV1Api coreV1Api) {
         // Generate an informer for pods, and starts its watch.
         SharedInformerFactory informerFactory = new SharedInformerFactory();
         SharedIndexInformer<V1Pod> podInformer = informerFactory.sharedIndexInformerFor(
