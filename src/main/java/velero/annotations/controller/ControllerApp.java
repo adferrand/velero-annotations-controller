@@ -48,7 +48,7 @@ public class ControllerApp {
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("Preparing the controller ...");
-        ApiClient apiClient = Config.defaultClient();
+        ApiClient apiClient = Config.fromCluster();
         Controller controller = generateController(new CoreV1Api(apiClient));
 
         LOGGER.info("Starting the controller ...");
