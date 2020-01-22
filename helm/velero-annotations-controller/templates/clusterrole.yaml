@@ -6,24 +6,10 @@ metadata:
   labels:
 {{ include "velero-annotations-controller.labels" . | indent 4 }}
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - 'list'
-  - 'watch'
-  - 'get'
-  - 'patch'
-- apiGroups:
-  - ""
-  resources:
-  - endpoints
-  verbs:
-  - 'list'
-  - 'watch'
-  - 'get'
-  - 'create'
-  - 'update'
-  - 'patch'
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "watch", "get", "patch"]
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["*"]
 {{- end }}
