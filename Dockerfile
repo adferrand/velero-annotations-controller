@@ -1,13 +1,13 @@
 # First step: build the distribution folder for the application.
 # Second step: copy this folder into its runtime environment.
-FROM openjdk:13.0.2-jdk
+FROM openjdk:13.0.2
 
 COPY . /velero-annotations-controller
 RUN cd velero-annotations-controller \
  && chmod +x ./gradlew \
  && ./gradlew --no-daemon installDist
 
-FROM openjdk:13.0.2-jre
+FROM openjdk:13.0.2
 
 # Example: "one-ns,another-ns" to run the controller only for ns one-ns and another-ns.
 # Filter is disabled if the environment variable is empty.
