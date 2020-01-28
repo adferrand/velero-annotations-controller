@@ -15,6 +15,8 @@ ENV VELERO_ANNOTATIONS_CONTROLLER_NS_FILTER ""
 # Set to "false" to watch all volumes, not only volumes with persistent volume claims.
 ENV VELERO_ANNOTATIONS_CONTROLLER_PVCS_ONLY "true"
 
+ENV JAVA_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
+
 COPY --from=0 /velero-annotations-controller/build/install/velero-annotations-controller /application
 
 CMD ["/application/bin/velero-annotations-controller"]
