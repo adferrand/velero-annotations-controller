@@ -6,14 +6,10 @@ package velero.annotations.controller;
 
 import io.kubernetes.client.custom.V1Patch;
 import io.kubernetes.client.extended.controller.Controller;
-import io.kubernetes.client.extended.controller.LeaderElectingController;
 import io.kubernetes.client.extended.controller.builder.ControllerBuilder;
 import io.kubernetes.client.extended.controller.reconciler.Reconciler;
 import io.kubernetes.client.extended.controller.reconciler.Request;
 import io.kubernetes.client.extended.controller.reconciler.Result;
-import io.kubernetes.client.extended.leaderelection.LeaderElectionConfig;
-import io.kubernetes.client.extended.leaderelection.LeaderElector;
-import io.kubernetes.client.extended.leaderelection.resourcelock.EndpointsLock;
 import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.informer.cache.Lister;
@@ -31,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,7 +92,7 @@ public class ControllerApp {
         PodVeleroAnnotationsReconciler podReconciler = new PodVeleroAnnotationsReconciler(podInformer, coreV1Api, reconcilePVCsAnnotationsOnly, namespacesFilter);
 
         // Create the controller itself. It needs a working queue builder and a reconciler instance.
-        Controller controller = ControllerBuilder.defaultBuilder(informerFactory)
+        return ControllerBuilder.defaultBuilder(informerFactory)
                 .watch(workQueue -> ControllerBuilder.controllerWatchBuilder(V1Pod.class, workQueue)
                         .withOnDeleteFilter((V1Pod deletedNode, Boolean stateUnknown) -> false)
                         .build())
@@ -106,24 +101,6 @@ public class ControllerApp {
                 .withReadyFunc(podInformer::hasSynced)
                 .withWorkerCount(64)
                 .build();
-
-        // We do not return the controller directly. Instead, we return a LeaderElectingController instance, for HA purpose.
-        // Indeed, LeaderElectingController is able to coordinate several controller instances through several Pods, and query
-        // a Leader election to select the actual controller instance responsible to o actions. This way, loosing a Pod allows
-        // an automated transfer of Leader role (and operations) to another Pod.
-        UUID identity = UUID.randomUUID();
-        LOGGER.info("Controller instance identity for Leader election is: {}", identity);
-        return new LeaderElectingController(
-                new LeaderElector(
-                        new LeaderElectionConfig(
-                                new EndpointsLock("kube-system", "velero-annotations-controller", identity.toString()),
-                                Duration.ofMillis(10000),
-                                Duration.ofMillis(8000),
-                                Duration.ofMillis(5000))),
-                ControllerBuilder.controllerManagerBuilder(informerFactory)
-                    .addController(controller)
-                    .build()
-        );
     }
 
     /**

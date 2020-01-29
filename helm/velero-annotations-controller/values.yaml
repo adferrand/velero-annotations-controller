@@ -1,5 +1,3 @@
-replicaCount: 3
-
 image:
   repository: adferrand/velero-annotations-controller
   tag: latest

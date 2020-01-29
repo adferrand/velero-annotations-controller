@@ -5,7 +5,7 @@ metadata:
   labels:
 {{ include "velero-annotations-controller.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "velero-annotations-controller.name" . }}
