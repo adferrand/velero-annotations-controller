@@ -50,6 +50,8 @@ public class ControllerApp {
 
         LOGGER.info("Starting the controller ...");
         controller.run();
+
+        System.exit(0);
     }
 
     /**
