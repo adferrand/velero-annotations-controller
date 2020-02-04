@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.kubernetes:client-java-extended:7.0.0")
+    implementation("io.fabric8:kubernetes-client:4.7.1")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
