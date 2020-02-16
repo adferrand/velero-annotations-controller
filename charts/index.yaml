@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  velero-annotations-controller:
+  - apiVersion: v2
+    appVersion: "1"
+    created: "2020-02-16T22:46:54.4904978+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 40ec7672ca002489d6dd9ab90478a997d7d98dca7c8258562ecb8ea47c8fbbc4
+    name: velero-annotations-controller
+    type: application
+    urls:
+    - velero-annotations-controller-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-02-16T22:46:54.4902051+01:00"
