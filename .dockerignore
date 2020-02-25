@@ -1,6 +1,5 @@
-build
-.idea
-.gradle
+.venv
+*.egg-info
 .git
 .gitattributes
 .gitignore
