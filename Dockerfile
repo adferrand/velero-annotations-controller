@@ -5,4 +5,4 @@ COPY src/ /srv/ctrl
 RUN python3 -m venv /srv/ctrl \
  && /srv/ctrl/bin/pip install -e /srv/ctrl
 
-CMD ["/srv/ctrl/bin/kopf", "run", "/srv/ctrl/handlers.py"]
+CMD ["/srv/ctrl/bin/python", "/srv/ctrl/run.py"]

@@ -14,5 +14,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
-    install_requires=['kopf==0.25', 'kubernetes==10.0.1'],
+    install_requires=['kubernetes==10.0.1'],
 )
