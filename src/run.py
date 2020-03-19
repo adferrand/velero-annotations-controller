@@ -12,7 +12,7 @@ def _configure_logging():
     logging.basicConfig(
         format='%(asctime)s - controller - %(levelname)s - %(message)s',
         level=logging.DEBUG,
-        datefmt='%m/%d/%Y %I:%M:%S')
+        datefmt='%d/%m/%Y %I:%M:%S')
 
 
 def _configure_exit(watcher):
