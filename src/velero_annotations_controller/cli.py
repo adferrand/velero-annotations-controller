@@ -26,6 +26,8 @@ def _configure_exit(watcher):
 
 
 def main():
+    _configure_logging()
+
     logging.info('Starting controller.')
 
     if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/token'):
@@ -62,7 +64,7 @@ def main():
 
         if missing_volumes:
             print('Reconciling velero annotations on pod {}/{}: persistent_volumes={}, velero_annotation={}, missing={}.'
-                    .format(namespace, name, persistent_volumes, velero_annotation, missing_volumes))
+                  .format(namespace, name, persistent_volumes, velero_annotation, missing_volumes))
 
             velero_annotation.extend(missing_volumes)
             annotations[VELERO_ANNOTATION] = ','.join(velero_annotation)
@@ -72,5 +74,4 @@ def main():
 
 
 if __name__ == '__main__':
-    _configure_logging()
     main()
