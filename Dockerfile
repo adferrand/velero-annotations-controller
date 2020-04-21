@@ -1,12 +1,20 @@
-FROM python:3.8-slim
+FROM docker.io/python:3.8-slim AS constraints
+
+COPY . /tmp/workspace
+
+RUN python3 -m pip install --user poetry --no-warn-script-location \
+ && cd /tmp/workspace \
+ && python3 -m poetry export --format requirements.txt --without-hashes > /tmp/workspace/constraints.txt \
+ && python3 -m poetry build -f wheel
+
+FROM docker.io/python:3.8-alpine
 
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /srv/ctrl
+COPY --from=constraints /tmp/workspace/constraints.txt /tmp/workspace/dist/*.whl /tmp/workspace/
 
-COPY src/ /srv/ctrl
+RUN python3 -m venv /opt/ctrl \
+ && /opt/ctrl/bin/pip3 install -c /tmp/workspace/constraints.txt /tmp/workspace/*.whl \
+ && rm -rf /tmp/workspace
 
-RUN python3 -m venv /srv/ctrl \
- && /srv/ctrl/bin/pip install -e /srv/ctrl
-
-CMD ["/srv/ctrl/bin/python", "/srv/ctrl/run.py"]
+CMD ["/opt/ctrl/bin/velero-annotations-controller"]
