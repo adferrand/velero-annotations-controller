@@ -11,7 +11,7 @@ VELERO_ANNOTATION = 'backup.velero.io/backup-volumes'
 def _configure_logging():
     logging.basicConfig(
         format='%(asctime)s - controller - %(levelname)s - %(message)s',
-        level=logging.DEBUG,
+        level=logging.INFO,
         datefmt='%d/%m/%Y %I:%M:%S')
 
 
