@@ -14,7 +14,7 @@ steps:
   inputs:
     containerRegistry: $(dockerServiceConnection)
     repository: $(imageName)
-    Dockerfile: src/main/docker/Dockerfile.native
+    Dockerfile: native.Dockerfile
     tags: |
       latest
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
