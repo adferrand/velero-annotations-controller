@@ -2,7 +2,7 @@ FROM quay.io/quarkus/ubi-quarkus-native-image:20.0.0-java11 AS build
 
 COPY src /usr/src/app/src
 COPY gradle /usr/src/app/gradle
-COPY build.gradle.kts gradle.properties settings.gradle.kts gradlew /usr/src/app/
+COPY build.gradle.kts settings.gradle.kts gradlew /usr/src/app/
 
 USER root
 RUN chown -R quarkus /usr/src/app
