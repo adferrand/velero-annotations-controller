@@ -4,8 +4,10 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
     plugins {
-      id 'io.quarkus' version "${quarkusPluginVersion}"
+      id("io.quarkus") version "1.3.2.Final"
     }
 }
-rootProject.name='velero-annotations-controller'
+
+rootProject.name = "velero-annotations-controller"
