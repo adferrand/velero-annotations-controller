@@ -18,7 +18,7 @@ class PodsWatcher constructor(client: KubernetesClient, podHandler: PodHandler) 
 
     class PodResourceWatcher constructor(private val podHandler: PodHandler): Watcher<Pod?> {
         override fun eventReceived(action: Watcher.Action, pod: Pod?) {
-            pod?.let {
+            if (pod != null) {
                 when(action) {
                     Watcher.Action.ADDED, Watcher.Action.MODIFIED -> podHandler.handle(pod)
                     else -> {}
@@ -26,13 +26,15 @@ class PodsWatcher constructor(client: KubernetesClient, podHandler: PodHandler) 
             }
         }
 
-        override fun onClose(e: KubernetesClientException) {
-            // Nothing to do
+        override fun onClose(cause: KubernetesClientException?) {
+            if (cause != null) {
+                LOGGER.error("An error occurred while watching pods", cause)
+            }
         }
     }
 
     fun onStop(@Observes ev: ShutdownEvent?) {
-        LOGGER.info("Stop Pods watch ...")
+        LOGGER.info("Stop Pods watch...")
         watch.close()
     }
 

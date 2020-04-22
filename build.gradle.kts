@@ -37,6 +37,10 @@ tasks {
     named<QuarkusNative>("buildNative") {
         isEnableHttpUrlHandler = true
     }
+
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    }
 }
 
 allOpen {
@@ -46,6 +50,6 @@ allOpen {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }

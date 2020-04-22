@@ -1,4 +1,8 @@
 *
-!build/*-runner
-!build/*-runner.jar
-!build/lib/*
+!src
+!gradle
+!build.gradle.kts
+!gradle.properties
+!settings.gradle.kts
+!gradlew
+
