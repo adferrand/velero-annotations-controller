@@ -1,5 +1,4 @@
-.venv
-*.egg-info
-.git
-.gitattributes
-.gitignore
+*
+!build/*-runner
+!build/*-runner.jar
+!build/lib/*

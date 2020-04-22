@@ -1,6 +1,32 @@
-.venv
-*.egg-info
-__pycache__
-.vscode
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ
 .idea
-.venv
+*.ipr
+*.iml
+*.iws
+
+# NetBeans
+nb-configuration.xml
+
+# Visual Studio Code
+.vscode
+
+# OSX
+.DS_Store
+
+# Vim
+*.swp
+*.swo
+
+# patch
+*.orig
+*.rej
+
+# Gradle
+.gradle/
+build/
