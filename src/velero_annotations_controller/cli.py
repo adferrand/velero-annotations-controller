@@ -67,18 +67,21 @@ def main():
             print('Reconciling velero annotations on pod {}/{}: persistent_volumes={}, velero_annotation={}, missing={}.'
                   .format(namespace, name, persistent_volumes, velero_annotation, missing_volumes))
 
+            patch = []
             if not pod.metadata.annotations:
-                v1.patch_namespaced_pod(name, namespace, {
+                patch.append({
                     "op": "add",
                     "path": "/metadata/annotations",
                     "value": {},
                 })
 
-            v1.patch_namespaced_pod(name, namespace, {
+            patch.append({
                 "op": "add" if not velero_annotation else "replace",
                 "path": "/metadata/annotations/{0}".format(VELERO_ANNOTATION_REF),
                 "value": ",".join(velero_annotation + missing_volumes),
             })
+            
+            v1.patch_namespaced_pod(name, namespace, patch)
 
 
 if __name__ == '__main__':
