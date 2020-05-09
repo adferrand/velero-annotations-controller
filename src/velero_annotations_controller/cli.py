@@ -6,6 +6,7 @@ import sys
 from kubernetes import config, client, watch
 
 VELERO_ANNOTATION = 'backup.velero.io/backup-volumes'
+VELERO_ANNOTATION_REF = 'backup.velero.io~1backup-volumes'
 
 
 def _configure_logging():
@@ -66,11 +67,18 @@ def main():
             print('Reconciling velero annotations on pod {}/{}: persistent_volumes={}, velero_annotation={}, missing={}.'
                   .format(namespace, name, persistent_volumes, velero_annotation, missing_volumes))
 
-            velero_annotation.extend(missing_volumes)
-            annotations[VELERO_ANNOTATION] = ','.join(velero_annotation)
-            setattr(pod.metadata, 'annotations', annotations)
+            if not pod.metadata.annotations:
+                v1.patch_namespaced_pod(name, namespace, {
+                    "op": "add",
+                    "path": "/metadata/annotations",
+                    "value": {},
+                })
 
-            v1.patch_namespaced_pod(name, namespace, pod.metadata)
+            v1.patch_namespaced_pod(name, namespace, {
+                "op": "add" if not velero_annotation else "replace",
+                "path": "/metadata/annotations/{0}".format(VELERO_ANNOTATION_REF),
+                "value": ",".join(velero_annotation + missing_volumes),
+            })
 
 
 if __name__ == '__main__':
