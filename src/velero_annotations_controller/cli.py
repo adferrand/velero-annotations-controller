@@ -70,7 +70,7 @@ def main():
             annotations[VELERO_ANNOTATION] = ','.join(velero_annotation)
             setattr(pod.metadata, 'annotations', annotations)
 
-            v1.patch_namespaced_pod(name, namespace, pod)
+            v1.patch_namespaced_pod(name, namespace, pod.metadata)
 
 
 if __name__ == '__main__':
